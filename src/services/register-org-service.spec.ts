@@ -10,7 +10,7 @@ import { EmailAlreadyInUseError } from '@/services/errors/email-already-in-use-e
 import { FindLocalByPostalCodeService } from './find-locate-by-postal-code-service';
 import { RegisterOrgService } from './register-org-service';
 
-let registerOrgService: RegisterOrgService;
+let sut: RegisterOrgService;
 let orgsRepository: OrgsRepository;
 let citiesRepository: CitiesRepository;
 let findLocalByPostalCodeService: FindLocalByPostalCodeService;
@@ -21,7 +21,7 @@ describe('Register Org Service', () => {
     citiesRepository = new InMemoryCitiesRepository();
     findLocalByPostalCodeService = new FindLocalByPostalCodeService();
 
-    registerOrgService = new RegisterOrgService(
+    sut = new RegisterOrgService(
       orgsRepository,
       citiesRepository,
       findLocalByPostalCodeService,
@@ -44,7 +44,7 @@ describe('Register Org Service', () => {
       async () => mockLocate,
     );
 
-    const { org } = await registerOrgService.execute({
+    const { org } = await sut.execute({
       name: "John Doe Org's",
       email: 'contact@org.com',
       password: '12345678',
@@ -62,7 +62,7 @@ describe('Register Org Service', () => {
     citiesRepository = new InMemoryCitiesRepository();
     findLocalByPostalCodeService = new FindLocalByPostalCodeService();
 
-    registerOrgService = new RegisterOrgService(
+    sut = new RegisterOrgService(
       orgsRepository,
       citiesRepository,
       findLocalByPostalCodeService,
@@ -85,7 +85,7 @@ describe('Register Org Service', () => {
       async () => mockLocate,
     );
 
-    const { org } = await registerOrgService.execute({
+    const { org } = await sut.execute({
       name: "John Doe Org's",
       email: 'contact@org.com',
       password: '12345678',
@@ -105,7 +105,7 @@ describe('Register Org Service', () => {
     citiesRepository = new InMemoryCitiesRepository();
     findLocalByPostalCodeService = new FindLocalByPostalCodeService();
 
-    registerOrgService = new RegisterOrgService(
+    sut = new RegisterOrgService(
       orgsRepository,
       citiesRepository,
       findLocalByPostalCodeService,
@@ -128,7 +128,7 @@ describe('Register Org Service', () => {
       async () => mockLocate,
     );
 
-    await registerOrgService.execute({
+    await sut.execute({
       name: "John Doe Org's",
       email: 'contact@org.com',
       password: '12345678',
@@ -139,7 +139,7 @@ describe('Register Org Service', () => {
     });
 
     expect(async () => {
-      await registerOrgService.execute({
+      await sut.execute({
         name: "John Doe Org's",
         email: 'contact@org.com',
         password: '12345678',
@@ -156,7 +156,7 @@ describe('Register Org Service', () => {
     citiesRepository = new InMemoryCitiesRepository();
     findLocalByPostalCodeService = new FindLocalByPostalCodeService();
 
-    registerOrgService = new RegisterOrgService(
+    sut = new RegisterOrgService(
       orgsRepository,
       citiesRepository,
       findLocalByPostalCodeService,
@@ -180,7 +180,7 @@ describe('Register Org Service', () => {
     );
 
     expect(async () => {
-      await registerOrgService.execute({
+      await sut.execute({
         name: "John Doe Org's",
         email: 'contact@org.com',
         password: '12345678',
