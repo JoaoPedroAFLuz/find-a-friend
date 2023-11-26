@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { hash } from 'bcryptjs';
 
+import { CityNotFoundError } from '@/errors/city-not-found-error';
+import { EmailAlreadyInUseError } from '@/errors/email-already-in-use-error';
+import { PostalCodeNotFoundError } from '@/errors/postal-code-not-found-error';
 import { CitiesRepository } from '@/repositories/cities-repository';
 import { OrgsRepository } from '@/repositories/orgs-repository';
 
@@ -32,10 +35,14 @@ export class RegisterOrgService {
     const emailAlreadyInUse = await this.orgsRepository.findByEmail(email);
 
     if (emailAlreadyInUse) {
-      throw new Error('Email already in use');
+      throw new EmailAlreadyInUseError();
     }
 
     const cityData = await this.getCityData(postalCode);
+
+    if (!cityData) {
+      throw new PostalCodeNotFoundError();
+    }
 
     const city = await this.citiesRepository.findByCityNameAndStateAbbreviation(
       cityData.name,
@@ -43,7 +50,7 @@ export class RegisterOrgService {
     );
 
     if (!city) {
-      throw new Error('City not found');
+      throw new CityNotFoundError();
     }
 
     const passwordHash = await hash(password, 6);
@@ -64,6 +71,10 @@ export class RegisterOrgService {
     const { data } = await axios.get(
       `https://viacep.com.br/ws/${postalCode}/json`,
     );
+
+    if (data.erro) {
+      throw new PostalCodeNotFoundError();
+    }
 
     return data;
   }
