@@ -1,11 +1,11 @@
-import axios from 'axios';
+import { Org } from '@prisma/client';
 import { hash } from 'bcryptjs';
 
-import { CityNotFoundError } from '@/errors/city-not-found-error';
-import { EmailAlreadyInUseError } from '@/errors/email-already-in-use-error';
-import { PostalCodeNotFoundError } from '@/errors/postal-code-not-found-error';
 import { CitiesRepository } from '@/repositories/cities-repository';
 import { OrgsRepository } from '@/repositories/orgs-repository';
+import { CityNotFoundError } from '@/services/errors/city-not-found-error';
+import { EmailAlreadyInUseError } from '@/services/errors/email-already-in-use-error';
+import { FindLocalByPostalCodeService } from './find-locate-by-postal-code-service';
 
 interface RegisterOrgServiceRequest {
   name: string;
@@ -17,10 +17,15 @@ interface RegisterOrgServiceRequest {
   postalCode: string;
 }
 
+interface RegisterOrgServiceResponse {
+  org: Org;
+}
+
 export class RegisterOrgService {
   constructor(
     private orgsRepository: OrgsRepository,
     private citiesRepository: CitiesRepository,
+    private findLocalByPostalCodeService: FindLocalByPostalCodeService,
   ) {}
 
   async execute({
@@ -31,22 +36,20 @@ export class RegisterOrgService {
     phone,
     responsibleName,
     postalCode,
-  }: RegisterOrgServiceRequest) {
+  }: RegisterOrgServiceRequest): Promise<RegisterOrgServiceResponse> {
     const emailAlreadyInUse = await this.orgsRepository.findByEmail(email);
 
     if (emailAlreadyInUse) {
       throw new EmailAlreadyInUseError();
     }
 
-    const cityData = await this.getCityData(postalCode);
-
-    if (!cityData) {
-      throw new PostalCodeNotFoundError();
-    }
+    const locate = await this.findLocalByPostalCodeService.execute({
+      postalCode,
+    });
 
     const city = await this.citiesRepository.findByCityNameAndStateAbbreviation(
-      cityData.name,
-      cityData.uf,
+      locate.localidade,
+      locate.uf,
     );
 
     if (!city) {
@@ -55,7 +58,7 @@ export class RegisterOrgService {
 
     const passwordHash = await hash(password, 6);
 
-    await this.orgsRepository.create({
+    const org = await this.orgsRepository.create({
       name,
       city_id: city.id,
       email,
@@ -65,17 +68,7 @@ export class RegisterOrgService {
       responsible_name: responsibleName,
       postal_code: postalCode,
     });
-  }
 
-  private async getCityData(postalCode: string) {
-    const { data } = await axios.get(
-      `https://viacep.com.br/ws/${postalCode}/json`,
-    );
-
-    if (data.erro) {
-      throw new PostalCodeNotFoundError();
-    }
-
-    return data;
+    return { org };
   }
 }
