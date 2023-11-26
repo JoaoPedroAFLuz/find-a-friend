@@ -1,5 +1,5 @@
 import { compare } from 'bcryptjs';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CitiesRepository } from '@/repositories/cities-repository';
 import { InMemoryCitiesRepository } from '@/repositories/in-memory/in-memory-cities-repository';
@@ -16,11 +16,13 @@ let citiesRepository: CitiesRepository;
 let findLocalByPostalCodeService: FindLocalByPostalCodeService;
 
 describe('Register Org Service', () => {
-  it('should be able to create an org', async () => {
+  beforeEach(() => {
     orgsRepository = new InMemoryOrgsRepository();
     citiesRepository = new InMemoryCitiesRepository();
     findLocalByPostalCodeService = new FindLocalByPostalCodeService();
+  });
 
+  it('should be able to create an org', async () => {
     sut = new RegisterOrgService(
       orgsRepository,
       citiesRepository,
@@ -58,10 +60,6 @@ describe('Register Org Service', () => {
   });
 
   it('should hash org password upon registration', async () => {
-    orgsRepository = new InMemoryOrgsRepository();
-    citiesRepository = new InMemoryCitiesRepository();
-    findLocalByPostalCodeService = new FindLocalByPostalCodeService();
-
     sut = new RegisterOrgService(
       orgsRepository,
       citiesRepository,
@@ -101,10 +99,6 @@ describe('Register Org Service', () => {
   });
 
   it('should not be able to create an org if e-mail already in use', async () => {
-    orgsRepository = new InMemoryOrgsRepository();
-    citiesRepository = new InMemoryCitiesRepository();
-    findLocalByPostalCodeService = new FindLocalByPostalCodeService();
-
     sut = new RegisterOrgService(
       orgsRepository,
       citiesRepository,
@@ -152,10 +146,6 @@ describe('Register Org Service', () => {
   });
 
   it('should not be able to create an org if city not found', async () => {
-    orgsRepository = new InMemoryOrgsRepository();
-    citiesRepository = new InMemoryCitiesRepository();
-    findLocalByPostalCodeService = new FindLocalByPostalCodeService();
-
     sut = new RegisterOrgService(
       orgsRepository,
       citiesRepository,

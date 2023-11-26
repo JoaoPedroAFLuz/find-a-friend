@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { InvalidPostalCodeError } from './errors/invalid-postal-code-error';
 import { PostalCodeNotFoundError } from './errors/postal-code-not-found-error';
@@ -7,9 +7,11 @@ import { FindLocalByPostalCodeService } from './find-locate-by-postal-code-servi
 let sut: FindLocalByPostalCodeService;
 
 describe('Find Local By Postal Code Service', () => {
-  it('should be able to find local by postal code', async () => {
+  beforeEach(() => {
     sut = new FindLocalByPostalCodeService();
+  });
 
+  it('should be able to find local by postal code', async () => {
     const postalCode = '01001000';
 
     const locate = await sut.execute({
@@ -21,8 +23,6 @@ describe('Find Local By Postal Code Service', () => {
   });
 
   it('should be not able to find local if postal code not found', async () => {
-    sut = new FindLocalByPostalCodeService();
-
     const invalidPostalCodeOne = '1234567';
     const invalidPostalCodeTwo = 'ABCDEFGH';
 
@@ -40,8 +40,6 @@ describe('Find Local By Postal Code Service', () => {
   });
 
   it('should be not able to find local if postal code not found', async () => {
-    sut = new FindLocalByPostalCodeService();
-
     const postalCode = '00000000';
 
     expect(async () => {

@@ -1,5 +1,5 @@
 import { hash } from 'bcryptjs';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { InMemoryOrgsRepository } from '@/repositories/in-memory/in-memory-orgs-repository';
 import { OrgsRepository } from '@/repositories/orgs-repository';
@@ -10,10 +10,12 @@ let sut: AuthenticateService;
 let orgsRepository: OrgsRepository;
 
 describe('Authenticate Service', () => {
-  it('should be able to authenticate', async () => {
+  beforeEach(() => {
     orgsRepository = new InMemoryOrgsRepository();
     sut = new AuthenticateService(orgsRepository);
+  });
 
+  it('should be able to authenticate', async () => {
     const hashedPassword = await hash('12345678', 6);
 
     await orgsRepository.create({
@@ -39,9 +41,6 @@ describe('Authenticate Service', () => {
   });
 
   it('should not be able to authenticate with wrong email', async () => {
-    orgsRepository = new InMemoryOrgsRepository();
-    sut = new AuthenticateService(orgsRepository);
-
     const credentials = {
       email: 'contact@org.com',
       password: '12345678',
@@ -53,9 +52,6 @@ describe('Authenticate Service', () => {
   });
 
   it('should not be able to authenticate with wrong password', async () => {
-    orgsRepository = new InMemoryOrgsRepository();
-    sut = new AuthenticateService(orgsRepository);
-
     const hashedPassword = await hash('12345678', 6);
 
     await orgsRepository.create({
