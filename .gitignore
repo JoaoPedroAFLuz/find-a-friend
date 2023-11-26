@@ -1,2 +1,11 @@
+## Dependencies
 node_modules
+
+## Build
 build
+
+## IDE
+.vscode
+
+## Environment
+.env
