@@ -9,3 +9,6 @@ build
 
 ## Environment
 .env
+
+## Test coverage
+coverage
