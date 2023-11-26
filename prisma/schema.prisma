@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model State {
+  id           String @id @default(uuid())
+  name         String
+  abbreviation String
+
+  cities City[]
+
+  @@map("states")
+}
+
+model City {
+  id       String @id @default(uuid())
+  state_id String
+  name     String
+
+  state State @relation(fields: [state_id], references: [id])
+  orgs  Org[]
+
+  @@map("cities")
+}
+
+model Org {
+  id               String   @id @default(uuid())
+  city_id          String   @map("cityId")
+  name             String
+  email            String   @unique
+  password         String
+  address          String
+  phone            String
+  responsible_name String
+  postal_code      String
+  createdAt        DateTime @default(now())
+
+  city City  @relation(fields: [city_id], references: [id])
+  pets Pet[]
+
+  @@map("orgs")
+}
+
+enum AgeEnum {
+  PUPPY
+  ADULT
+}
+
+enum PortEnum {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum EnergyLevelEnum {
+  VERY_LOW
+  LOW
+  MEDIUM
+  HIGH
+  VERY_HIGH
+}
+
+enum IndependenceLevelEnum {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum EnvironmentEnum {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+model Pet {
+  id                    String                @id @default(uuid())
+  org_id                String
+  name                  String
+  about                 String
+  age                   AgeEnum
+  port                  PortEnum
+  energy_level          EnergyLevelEnum
+  independence_level    IndependenceLevelEnum
+  environment           EnvironmentEnum
+  photos                String[]
+  adoption_requirements String[]
+  created_at            DateTime              @default(now())
+
+  org Org @relation(fields: [org_id], references: [id])
+
+  @@map("pets")
+}
