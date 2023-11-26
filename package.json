@@ -7,13 +7,14 @@
     "start": "node build/server.js",
     "start:dev": "tsx watch src/server.ts",
     "build": "tsup src --out-dir build",
-    "lint": "eslint . --ext .ts",
-    "format": "prettier --write ."
+    "lint": "eslint ./src --ext .ts",
+    "format": "prettier ./src --write"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcryptjs": "2.4.6",
     "@types/node": "20.10.0",
     "@typescript-eslint/eslint-plugin": "6.12.0",
     "@typescript-eslint/parser": "6.12.0",
@@ -28,6 +29,8 @@
   },
   "dependencies": {
     "@prisma/client": "5.6.0",
+    "axios": "1.6.2",
+    "bcryptjs": "2.4.3",
     "dotenv": "16.3.1",
     "fastify": "4.24.3",
     "zod": "3.22.4"
