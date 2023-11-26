@@ -3,8 +3,8 @@ import { hash } from 'bcryptjs';
 
 import { CitiesRepository } from '@/repositories/cities-repository';
 import { OrgsRepository } from '@/repositories/orgs-repository';
-import { CityNotFoundError } from '@/services/errors/city-not-found-error';
 import { EmailAlreadyInUseError } from '@/services/errors/email-already-in-use-error';
+import { ResourceNotFound } from '@/services/errors/resource-not-found-error';
 import { FindLocalByPostalCodeService } from './find-locate-by-postal-code-service';
 
 interface RegisterOrgServiceRequest {
@@ -53,7 +53,7 @@ export class RegisterOrgService {
     );
 
     if (!city) {
-      throw new CityNotFoundError();
+      throw new ResourceNotFound('City not found');
     }
 
     const passwordHash = await hash(password, 6);

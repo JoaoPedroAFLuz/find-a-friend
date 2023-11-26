@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-import { PostalCodeNotFoundError } from '@/services/errors/postal-code-not-found-error';
 import { isAValidPostalCode } from '@/utils/is-a-valid-postal-code';
 import { InvalidPostalCodeError } from './errors/invalid-postal-code-error';
+import { ResourceNotFound } from './errors/resource-not-found-error';
 
 interface FindLocalByPostalCodeServiceRequest {
   postalCode: string;
@@ -36,7 +36,7 @@ export class FindLocalByPostalCodeService {
     );
 
     if (data.erro) {
-      throw new PostalCodeNotFoundError();
+      throw new ResourceNotFound('Postal code not found');
     }
 
     return data;

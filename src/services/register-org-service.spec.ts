@@ -5,8 +5,8 @@ import { CitiesRepository } from '@/repositories/cities-repository';
 import { InMemoryCitiesRepository } from '@/repositories/in-memory/in-memory-cities-repository';
 import { InMemoryOrgsRepository } from '@/repositories/in-memory/in-memory-orgs-repository';
 import { OrgsRepository } from '@/repositories/orgs-repository';
-import { CityNotFoundError } from '@/services/errors/city-not-found-error';
 import { EmailAlreadyInUseError } from '@/services/errors/email-already-in-use-error';
+import { ResourceNotFound } from '@/services/errors/resource-not-found-error';
 import { FindLocalByPostalCodeService } from './find-locate-by-postal-code-service';
 import { RegisterOrgService } from './register-org-service';
 
@@ -179,6 +179,6 @@ describe('Register Org Service', () => {
         responsibleName: 'John Doe',
         postalCode: '01001000',
       });
-    }).rejects.toBeInstanceOf(CityNotFoundError);
+    }).rejects.toBeInstanceOf(ResourceNotFound);
   });
 });

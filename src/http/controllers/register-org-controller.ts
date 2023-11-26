@@ -1,9 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 
-import { CityNotFoundError } from '@/services/errors/city-not-found-error';
 import { EmailAlreadyInUseError } from '@/services/errors/email-already-in-use-error';
-import { PostalCodeNotFoundError } from '@/services/errors/postal-code-not-found-error';
+import { ResourceNotFound } from '@/services/errors/resource-not-found-error';
 import { makeRegisterOrgService } from '@/services/factories/make-register-org-service';
 
 export async function registerOrgController(
@@ -41,10 +40,7 @@ export async function registerOrgController(
       postalCode,
     });
   } catch (error) {
-    if (
-      error instanceof CityNotFoundError ||
-      error instanceof PostalCodeNotFoundError
-    ) {
+    if (error instanceof ResourceNotFound) {
       return reply.status(404).send({
         message: error.message,
       });

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { InvalidPostalCodeError } from './errors/invalid-postal-code-error';
-import { PostalCodeNotFoundError } from './errors/postal-code-not-found-error';
+import { ResourceNotFound } from './errors/resource-not-found-error';
 import { FindLocalByPostalCodeService } from './find-locate-by-postal-code-service';
 
 let sut: FindLocalByPostalCodeService;
@@ -46,6 +46,6 @@ describe('Find Local By Postal Code Service', () => {
       await sut.execute({
         postalCode,
       });
-    }).rejects.toBeInstanceOf(PostalCodeNotFoundError);
+    }).rejects.toBeInstanceOf(ResourceNotFound);
   });
 });
