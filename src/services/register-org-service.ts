@@ -5,7 +5,7 @@ import { CitiesRepository } from '@/repositories/cities-repository';
 import { OrgsRepository } from '@/repositories/orgs-repository';
 import { EmailAlreadyInUseError } from '@/services/errors/email-already-in-use-error';
 import { ResourceNotFound } from '@/services/errors/resource-not-found-error';
-import { FindLocalByPostalCodeService } from './find-locate-by-postal-code-service';
+import { FindLocationByPostalCodeService } from './find-location-by-postal-code-service';
 
 interface RegisterOrgServiceRequest {
   name: string;
@@ -25,7 +25,7 @@ export class RegisterOrgService {
   constructor(
     private orgsRepository: OrgsRepository,
     private citiesRepository: CitiesRepository,
-    private findLocalByPostalCodeService: FindLocalByPostalCodeService,
+    private findLocalByPostalCodeService: FindLocationByPostalCodeService,
   ) {}
 
   async execute({
@@ -43,13 +43,13 @@ export class RegisterOrgService {
       throw new EmailAlreadyInUseError();
     }
 
-    const locate = await this.findLocalByPostalCodeService.execute({
+    const location = await this.findLocalByPostalCodeService.execute({
       postalCode,
     });
 
     const city = await this.citiesRepository.findByCityNameAndStateAbbreviation(
-      locate.localidade,
-      locate.uf,
+      location.localidade,
+      location.uf,
     );
 
     if (!city) {

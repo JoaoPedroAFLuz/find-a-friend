@@ -2,27 +2,27 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { InvalidPostalCodeError } from './errors/invalid-postal-code-error';
 import { ResourceNotFound } from './errors/resource-not-found-error';
-import { FindLocalByPostalCodeService } from './find-locate-by-postal-code-service';
+import { FindLocationByPostalCodeService } from './find-location-by-postal-code-service';
 
-let sut: FindLocalByPostalCodeService;
+let sut: FindLocationByPostalCodeService;
 
-describe('Find Local By Postal Code Service', () => {
+describe('Find Location By Postal Code Service', () => {
   beforeEach(() => {
-    sut = new FindLocalByPostalCodeService();
+    sut = new FindLocationByPostalCodeService();
   });
 
-  it('should be able to find local by postal code', async () => {
+  it('should be able to find location by postal code', async () => {
     const postalCode = '01001000';
 
-    const locate = await sut.execute({
+    const location = await sut.execute({
       postalCode,
     });
 
-    expect(locate.cep).toEqual('01001-000');
-    expect(locate.localidade).toEqual('São Paulo');
+    expect(location.cep).toEqual('01001-000');
+    expect(location.localidade).toEqual('São Paulo');
   });
 
-  it('should be not able to find local if postal code not found', async () => {
+  it('should be not able to find location if postal code is invalid', async () => {
     const invalidPostalCodeOne = '1234567';
     const invalidPostalCodeTwo = 'ABCDEFGH';
 
@@ -39,7 +39,7 @@ describe('Find Local By Postal Code Service', () => {
     }).rejects.toBeInstanceOf(InvalidPostalCodeError);
   });
 
-  it('should be not able to find local if postal code not found', async () => {
+  it('should be not able to find location if postal code not found', async () => {
     const postalCode = '00000000';
 
     expect(async () => {

@@ -3,20 +3,9 @@ import { City, State } from '@prisma/client';
 import { CitiesRepository } from '../cities-repository';
 
 export class InMemoryCitiesRepository implements CitiesRepository {
-  states: State[] = [
-    {
-      id: '591836a4-8c91-11ee-b9d1-0242ac120002',
-      name: 'São Paulo',
-      abbreviation: 'SP',
-    },
-  ];
-  cities: City[] = [
-    {
-      id: '591838fc-8c91-11ee-b9d1-0242ac120002',
-      state_id: '591836a4-8c91-11ee-b9d1-0242ac120002',
-      name: 'São Paulo',
-    },
-  ];
+  public cities: City[] = [];
+
+  public states: State[] = [];
 
   async findByCityNameAndStateAbbreviation(
     cityName: string,
