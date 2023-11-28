@@ -1,11 +1,11 @@
 import { compare } from 'bcryptjs';
+import { randomUUID } from 'crypto';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { InMemoryCitiesRepository } from '@/repositories/in-memory/in-memory-cities-repository';
 import { InMemoryOrgsRepository } from '@/repositories/in-memory/in-memory-orgs-repository';
 import { EmailAlreadyInUseError } from '@/services/errors/email-already-in-use-error';
 import { ResourceNotFound } from '@/services/errors/resource-not-found-error';
-import { randomUUID } from 'crypto';
 import { FindLocationByPostalCodeService } from './find-location-by-postal-code-service';
 import { RegisterOrgService } from './register-org-service';
 
