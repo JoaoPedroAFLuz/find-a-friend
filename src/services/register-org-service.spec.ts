@@ -1,33 +1,44 @@
 import { compare } from 'bcryptjs';
-import { describe, expect, it, vi } from 'vitest';
+import { randomUUID } from 'crypto';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { CitiesRepository } from '@/repositories/cities-repository';
 import { InMemoryCitiesRepository } from '@/repositories/in-memory/in-memory-cities-repository';
 import { InMemoryOrgsRepository } from '@/repositories/in-memory/in-memory-orgs-repository';
-import { OrgsRepository } from '@/repositories/orgs-repository';
-import { CityNotFoundError } from '@/services/errors/city-not-found-error';
 import { EmailAlreadyInUseError } from '@/services/errors/email-already-in-use-error';
-import { FindLocalByPostalCodeService } from './find-locate-by-postal-code-service';
+import { ResourceNotFound } from '@/services/errors/resource-not-found-error';
+import { FindLocationByPostalCodeService } from './find-location-by-postal-code-service';
 import { RegisterOrgService } from './register-org-service';
 
-let registerOrgService: RegisterOrgService;
-let orgsRepository: OrgsRepository;
-let citiesRepository: CitiesRepository;
-let findLocalByPostalCodeService: FindLocalByPostalCodeService;
+let sut: RegisterOrgService;
+let orgsRepository: InMemoryOrgsRepository;
+let citiesRepository: InMemoryCitiesRepository;
+let findLocalByPostalCodeService: FindLocationByPostalCodeService;
 
 describe('Register Org Service', () => {
-  it('should be able to create an org', async () => {
+  beforeEach(() => {
     orgsRepository = new InMemoryOrgsRepository();
     citiesRepository = new InMemoryCitiesRepository();
-    findLocalByPostalCodeService = new FindLocalByPostalCodeService();
+    findLocalByPostalCodeService = new FindLocationByPostalCodeService();
 
-    registerOrgService = new RegisterOrgService(
+    sut = new RegisterOrgService(
       orgsRepository,
       citiesRepository,
       findLocalByPostalCodeService,
     );
 
-    const mockLocate = {
+    citiesRepository.states.push({
+      id: randomUUID(),
+      name: 'São Paulo',
+      abbreviation: 'SP',
+    });
+
+    citiesRepository.cities.push({
+      id: randomUUID(),
+      name: 'São Paulo',
+      state_id: citiesRepository.states[0].id,
+    });
+
+    const mockLocation = {
       cep: '01001-000',
       logradouro: 'Praça da Sé',
       complemento: 'lado ímpar',
@@ -41,10 +52,12 @@ describe('Register Org Service', () => {
     };
 
     vi.spyOn(findLocalByPostalCodeService, 'execute').mockImplementation(
-      async () => mockLocate,
+      async () => mockLocation,
     );
+  });
 
-    const { org } = await registerOrgService.execute({
+  it('should be able to create an org', async () => {
+    const { org } = await sut.execute({
       name: "John Doe Org's",
       email: 'contact@org.com',
       password: '12345678',
@@ -58,34 +71,7 @@ describe('Register Org Service', () => {
   });
 
   it('should hash org password upon registration', async () => {
-    orgsRepository = new InMemoryOrgsRepository();
-    citiesRepository = new InMemoryCitiesRepository();
-    findLocalByPostalCodeService = new FindLocalByPostalCodeService();
-
-    registerOrgService = new RegisterOrgService(
-      orgsRepository,
-      citiesRepository,
-      findLocalByPostalCodeService,
-    );
-
-    const mockLocate = {
-      cep: '01001-000',
-      logradouro: 'Praça da Sé',
-      complemento: 'lado ímpar',
-      bairro: 'Sé',
-      localidade: 'São Paulo',
-      uf: 'SP',
-      ibge: '3550308',
-      gia: '1004',
-      ddd: '11',
-      siafi: '7107',
-    };
-
-    vi.spyOn(findLocalByPostalCodeService, 'execute').mockImplementation(
-      async () => mockLocate,
-    );
-
-    const { org } = await registerOrgService.execute({
+    const { org } = await sut.execute({
       name: "John Doe Org's",
       email: 'contact@org.com',
       password: '12345678',
@@ -101,34 +87,7 @@ describe('Register Org Service', () => {
   });
 
   it('should not be able to create an org if e-mail already in use', async () => {
-    orgsRepository = new InMemoryOrgsRepository();
-    citiesRepository = new InMemoryCitiesRepository();
-    findLocalByPostalCodeService = new FindLocalByPostalCodeService();
-
-    registerOrgService = new RegisterOrgService(
-      orgsRepository,
-      citiesRepository,
-      findLocalByPostalCodeService,
-    );
-
-    const mockLocate = {
-      cep: '01001-000',
-      logradouro: 'Praça da Sé',
-      complemento: 'lado ímpar',
-      bairro: 'Sé',
-      localidade: 'São Paulo',
-      uf: 'SP',
-      ibge: '3550308',
-      gia: '1004',
-      ddd: '11',
-      siafi: '7107',
-    };
-
-    vi.spyOn(findLocalByPostalCodeService, 'execute').mockImplementation(
-      async () => mockLocate,
-    );
-
-    await registerOrgService.execute({
+    await sut.execute({
       name: "John Doe Org's",
       email: 'contact@org.com',
       password: '12345678',
@@ -139,7 +98,7 @@ describe('Register Org Service', () => {
     });
 
     expect(async () => {
-      await registerOrgService.execute({
+      await sut.execute({
         name: "John Doe Org's",
         email: 'contact@org.com',
         password: '12345678',
@@ -152,17 +111,7 @@ describe('Register Org Service', () => {
   });
 
   it('should not be able to create an org if city not found', async () => {
-    orgsRepository = new InMemoryOrgsRepository();
-    citiesRepository = new InMemoryCitiesRepository();
-    findLocalByPostalCodeService = new FindLocalByPostalCodeService();
-
-    registerOrgService = new RegisterOrgService(
-      orgsRepository,
-      citiesRepository,
-      findLocalByPostalCodeService,
-    );
-
-    const mockLocate = {
+    const mockLocationWithUnknownCity = {
       cep: '20010-020',
       logradouro: 'Rua São José',
       complemento: '',
@@ -176,11 +125,11 @@ describe('Register Org Service', () => {
     };
 
     vi.spyOn(findLocalByPostalCodeService, 'execute').mockImplementation(
-      async () => mockLocate,
+      async () => mockLocationWithUnknownCity,
     );
 
     expect(async () => {
-      await registerOrgService.execute({
+      await sut.execute({
         name: "John Doe Org's",
         email: 'contact@org.com',
         password: '12345678',
@@ -189,6 +138,6 @@ describe('Register Org Service', () => {
         responsibleName: 'John Doe',
         postalCode: '01001000',
       });
-    }).rejects.toBeInstanceOf(CityNotFoundError);
+    }).rejects.toBeInstanceOf(ResourceNotFound);
   });
 });

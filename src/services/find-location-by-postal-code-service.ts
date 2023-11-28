@@ -1,14 +1,14 @@
 import axios from 'axios';
 
-import { PostalCodeNotFoundError } from '@/services/errors/postal-code-not-found-error';
 import { isAValidPostalCode } from '@/utils/is-a-valid-postal-code';
 import { InvalidPostalCodeError } from './errors/invalid-postal-code-error';
+import { ResourceNotFound } from './errors/resource-not-found-error';
 
-interface FindLocalByPostalCodeServiceRequest {
+interface FindLocationByPostalCodeServiceRequest {
   postalCode: string;
 }
 
-interface FindLocalByPostalCodeServiceResponse {
+interface FindLocationByPostalCodeServiceResponse {
   cep: string;
   logradouro: string;
   complemento: string;
@@ -21,12 +21,12 @@ interface FindLocalByPostalCodeServiceResponse {
   siafi: string;
 }
 
-export class FindLocalByPostalCodeService {
+export class FindLocationByPostalCodeService {
   constructor() {}
 
   async execute({
     postalCode,
-  }: FindLocalByPostalCodeServiceRequest): Promise<FindLocalByPostalCodeServiceResponse> {
+  }: FindLocationByPostalCodeServiceRequest): Promise<FindLocationByPostalCodeServiceResponse> {
     if (!isAValidPostalCode(postalCode)) {
       throw new InvalidPostalCodeError();
     }
@@ -36,7 +36,7 @@ export class FindLocalByPostalCodeService {
     );
 
     if (data.erro) {
-      throw new PostalCodeNotFoundError();
+      throw new ResourceNotFound('Location code not found');
     }
 
     return data;

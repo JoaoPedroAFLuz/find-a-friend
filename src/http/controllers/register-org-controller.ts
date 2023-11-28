@@ -1,13 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 
-import { PrismaCitiesRepository } from '@/repositories/prisma/prisma-cities-repository';
-import { PrismaOrgsRepository } from '@/repositories/prisma/prisma-orgs-repository';
-import { CityNotFoundError } from '@/services/errors/city-not-found-error';
 import { EmailAlreadyInUseError } from '@/services/errors/email-already-in-use-error';
-import { PostalCodeNotFoundError } from '@/services/errors/postal-code-not-found-error';
-import { FindLocalByPostalCodeService } from '@/services/find-locate-by-postal-code-service';
-import { RegisterOrgService } from '@/services/register-org-service';
+import { ResourceNotFound } from '@/services/errors/resource-not-found-error';
+import { makeRegisterOrgService } from '@/services/factories/make-register-org-service';
 
 export async function registerOrgController(
   request: FastifyRequest,
@@ -32,14 +28,7 @@ export async function registerOrgController(
     registerBodySchema.parse(request.body);
 
   try {
-    const prismaOrgsRepository = new PrismaOrgsRepository();
-    const prismaCitiesRepository = new PrismaCitiesRepository();
-    const findLocalByPostalCodeService = new FindLocalByPostalCodeService();
-    const registerOrgService = new RegisterOrgService(
-      prismaOrgsRepository,
-      prismaCitiesRepository,
-      findLocalByPostalCodeService,
-    );
+    const registerOrgService = makeRegisterOrgService();
 
     await registerOrgService.execute({
       name,
@@ -51,10 +40,7 @@ export async function registerOrgController(
       postalCode,
     });
   } catch (error) {
-    if (
-      error instanceof CityNotFoundError ||
-      error instanceof PostalCodeNotFoundError
-    ) {
+    if (error instanceof ResourceNotFound) {
       return reply.status(404).send({
         message: error.message,
       });
