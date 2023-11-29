@@ -10,6 +10,14 @@ export class PrismaOrgsRepository implements OrgsRepository {
     });
   }
 
+  async findById(id: string) {
+    return prisma.org.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
   async findByEmail(email: string) {
     return prisma.org.findUnique({
       where: {

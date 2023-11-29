@@ -3,13 +3,13 @@ import { z } from 'zod';
 
 import { EmailAlreadyInUseError } from '@/services/errors/email-already-in-use-error';
 import { ResourceNotFound } from '@/services/errors/resource-not-found-error';
-import { makeRegisterOrgService } from '@/services/factories/make-register-org-service';
+import { makeSignInService } from '@/services/factories/make-sing-in-service';
 
-export async function registerOrgController(
+export async function signInController(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const registerBodySchema = z.object({
+  const singInBodySchema = z.object({
     name: z.string().min(3, 'Name must have at least 3 characters'),
     email: z.string().email('Email invalid'),
     password: z.string().min(8, 'Password must have at least 8 characters'),
@@ -25,12 +25,12 @@ export async function registerOrgController(
   });
 
   const { name, email, password, address, phone, responsibleName, postalCode } =
-    registerBodySchema.parse(request.body);
+    singInBodySchema.parse(request.body);
 
   try {
-    const registerOrgService = makeRegisterOrgService();
+    const signInService = makeSignInService();
 
-    await registerOrgService.execute({
+    const { org } = await signInService.execute({
       name,
       email,
       password,
@@ -39,6 +39,10 @@ export async function registerOrgController(
       responsibleName,
       postalCode,
     });
+
+    const token = await reply.jwtSign({}, { sign: { sub: org.id } });
+
+    return reply.status(201).send({ token });
   } catch (error) {
     if (error instanceof ResourceNotFound) {
       return reply.status(404).send({
@@ -54,6 +58,4 @@ export async function registerOrgController(
 
     throw error;
   }
-
-  return reply.status(201).send();
 }
