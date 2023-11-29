@@ -7,7 +7,7 @@ import { EmailAlreadyInUseError } from '@/services/errors/email-already-in-use-e
 import { ResourceNotFound } from '@/services/errors/resource-not-found-error';
 import { FindLocationByPostalCodeService } from './find-location-by-postal-code-service';
 
-interface RegisterOrgServiceRequest {
+interface SignInServiceRequest {
   name: string;
   email: string;
   password: string;
@@ -17,11 +17,11 @@ interface RegisterOrgServiceRequest {
   postalCode: string;
 }
 
-interface RegisterOrgServiceResponse {
+interface SignInServiceResponse {
   org: Org;
 }
 
-export class RegisterOrgService {
+export class SignInService {
   constructor(
     private orgsRepository: OrgsRepository,
     private citiesRepository: CitiesRepository,
@@ -36,7 +36,7 @@ export class RegisterOrgService {
     phone,
     responsibleName,
     postalCode,
-  }: RegisterOrgServiceRequest): Promise<RegisterOrgServiceResponse> {
+  }: SignInServiceRequest): Promise<SignInServiceResponse> {
     const emailAlreadyInUse = await this.orgsRepository.findByEmail(email);
 
     if (emailAlreadyInUse) {

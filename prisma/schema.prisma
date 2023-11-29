@@ -10,7 +10,7 @@ datasource db {
 model State {
   id           String @id @default(uuid())
   name         String
-  abbreviation String
+  abbreviation String @unique
 
   cities City[]
 

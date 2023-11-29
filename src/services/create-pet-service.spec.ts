@@ -1,8 +1,8 @@
-import { randomUUID } from 'node:crypto';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { InMemoryOrgsRepository } from '@/repositories/in-memory/in-memory-orgs-repository';
 import { InMemoryPetsRepository } from '@/repositories/in-memory/in-memory-pets-repository';
+import { randomUUID } from 'crypto';
 import {
   CreatePetService,
   CreatePetServiceRequest,
@@ -25,8 +25,10 @@ describe('Create Pet Service', async () => {
     petsRepository = new InMemoryPetsRepository();
     orgsRepository = new InMemoryOrgsRepository();
     sut = new CreatePetService(petsRepository, orgsRepository);
+  });
 
-    orgsRepository.create({
+  it('should be able do create a new pet', async () => {
+    const org = await orgsRepository.create({
       id: randomUUID(),
       city_id: randomUUID(),
       name: "John Doe Org's",
@@ -38,11 +40,9 @@ describe('Create Pet Service', async () => {
       postal_code: '01001000',
       createdAt: new Date(),
     });
-  });
 
-  it('should be able do create a new pet', async () => {
     const newPet: CreatePetServiceRequest = {
-      orgId: orgsRepository.items[0].id,
+      orgId: org.id,
       name: 'Bob',
       about: 'Friendly dog',
       age: PetAge.PUPPY,

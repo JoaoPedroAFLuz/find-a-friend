@@ -7,20 +7,20 @@ import { InMemoryOrgsRepository } from '@/repositories/in-memory/in-memory-orgs-
 import { EmailAlreadyInUseError } from '@/services/errors/email-already-in-use-error';
 import { ResourceNotFound } from '@/services/errors/resource-not-found-error';
 import { FindLocationByPostalCodeService } from './find-location-by-postal-code-service';
-import { RegisterOrgService } from './register-org-service';
+import { SignInService } from './sign-in-service';
 
-let sut: RegisterOrgService;
+let sut: SignInService;
 let orgsRepository: InMemoryOrgsRepository;
 let citiesRepository: InMemoryCitiesRepository;
 let findLocalByPostalCodeService: FindLocationByPostalCodeService;
 
-describe('Register Org Service', () => {
+describe('Sign In Service', () => {
   beforeEach(() => {
     orgsRepository = new InMemoryOrgsRepository();
     citiesRepository = new InMemoryCitiesRepository();
     findLocalByPostalCodeService = new FindLocationByPostalCodeService();
 
-    sut = new RegisterOrgService(
+    sut = new SignInService(
       orgsRepository,
       citiesRepository,
       findLocalByPostalCodeService,
