@@ -7,6 +7,13 @@ import {
   CreatePetService,
   CreatePetServiceRequest,
 } from './create-pet-service';
+import {
+  PetAge,
+  PetEnergyLevel,
+  PetEnvironment,
+  PetIndependenceLevel,
+  PetPort,
+} from './dtos/pet-dto';
 import { ResourceNotFound } from './errors/resource-not-found-error';
 
 let sut: CreatePetService;
@@ -38,11 +45,11 @@ describe('Create Pet Service', async () => {
       orgId: orgsRepository.items[0].id,
       name: 'Bob',
       about: 'Friendly dog',
-      age: 'PUPPY',
-      port: 'SMALL',
-      energyLevel: 'VERY_LOW',
-      independenceLevel: 'LOW',
-      environment: 'SMALL',
+      age: PetAge.PUPPY,
+      port: PetPort.SMALL,
+      energyLevel: PetEnergyLevel.LOW,
+      independenceLevel: PetIndependenceLevel.LOW,
+      environment: PetEnvironment.SMALL,
       photos: [],
       adoptionRequirements: [],
     };
@@ -57,11 +64,11 @@ describe('Create Pet Service', async () => {
       orgId: 'invalid-org-id',
       name: 'Bob',
       about: 'Friendly dog',
-      age: 'PUPPY',
-      port: 'SMALL',
-      energyLevel: 'VERY_LOW',
-      independenceLevel: 'LOW',
-      environment: 'SMALL',
+      age: PetAge.PUPPY,
+      port: PetPort.SMALL,
+      energyLevel: PetEnergyLevel.LOW,
+      independenceLevel: PetIndependenceLevel.LOW,
+      environment: PetEnvironment.SMALL,
       photos: [],
       adoptionRequirements: [],
     };
