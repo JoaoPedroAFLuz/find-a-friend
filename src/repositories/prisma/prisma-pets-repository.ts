@@ -22,4 +22,14 @@ export class PrismaPetsRepository implements PetsRepository {
       });
     }
   }
+
+  async findByCityId(cityId: string) {
+    return prisma.pet.findMany({
+      where: {
+        org: {
+          city_id: cityId,
+        },
+      },
+    });
+  }
 }
