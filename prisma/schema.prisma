@@ -30,7 +30,7 @@ model City {
 
 model Org {
   id               String   @id @default(uuid())
-  city_id          String   @map("cityId")
+  city_id          String
   name             String
   email            String   @unique
   password         String
