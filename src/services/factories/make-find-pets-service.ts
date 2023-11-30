@@ -1,10 +1,10 @@
 import { PrismaCitiesRepository } from '@/repositories/prisma/prisma-cities-repository';
 import { PrismaPetsRepository } from '@/repositories/prisma/prisma-pets-repository';
-import { FindPetsByCityService } from '../find-pets-by-city-service';
+import { FindPetsService } from '../find-pets-service';
 
-export function makeFindPetsByCityService() {
+export function makeFindPetsService() {
   const petsRepository = new PrismaPetsRepository();
   const citiesRepository = new PrismaCitiesRepository();
 
-  return new FindPetsByCityService(petsRepository, citiesRepository);
+  return new FindPetsService(petsRepository, citiesRepository);
 }

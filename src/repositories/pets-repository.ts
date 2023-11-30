@@ -1,8 +1,8 @@
-import { Pet } from '@prisma/client';
+import { Pet, Prisma } from '@prisma/client';
 
 import { PetInputDTO } from '@/services/dtos/pet-dto';
 
 export interface PetsRepository {
   create(data: PetInputDTO): Promise<Pet>;
-  findByCityId(cityId: string): Promise<Pet[]>;
+  findMany(data: Prisma.PetFindManyArgs): Promise<Pet[]>;
 }
