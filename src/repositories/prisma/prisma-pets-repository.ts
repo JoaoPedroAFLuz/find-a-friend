@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client';
+
 import { prisma } from '@/lib/prisma';
 import { PetInputDTO } from '@/services/dtos/pet-dto';
 import { PetsRepository } from '../pets-repository';
@@ -21,5 +23,22 @@ export class PrismaPetsRepository implements PetsRepository {
         },
       });
     }
+  }
+
+  async findById(id: string) {
+    const pet = await prisma.pet.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        org: true,
+      },
+    });
+
+    return pet || null;
+  }
+
+  async findMany(data: Prisma.PetFindManyArgs) {
+    return prisma.pet.findMany(data);
   }
 }

@@ -8,7 +8,7 @@ export class PrismaCitiesRepository implements CitiesRepository {
     cityName: string,
     stateAbbreviation: string,
   ): Promise<City | null> {
-    const city = await prisma.city.findFirst({
+    return prisma.city.findFirst({
       where: {
         name: cityName,
         state: {
@@ -16,7 +16,5 @@ export class PrismaCitiesRepository implements CitiesRepository {
         },
       },
     });
-
-    return city;
   }
 }
