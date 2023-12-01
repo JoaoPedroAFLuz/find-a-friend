@@ -1,24 +1,25 @@
-import { Pet } from '@prisma/client';
+import {
+  AgeEnum,
+  EnergyLevelEnum,
+  EnvironmentEnum,
+  IndependenceLevelEnum,
+  Pet,
+  PortEnum,
+} from '@prisma/client';
 
 import { CitiesRepository } from '@/repositories/cities-repository';
 import { PetsRepository } from '@/repositories/pets-repository';
-import {
-  PetAge,
-  PetEnergyLevel,
-  PetEnvironment,
-  PetIndependenceLevel,
-  PetPort,
-} from './dtos/pet-dto';
+
 import { ResourceNotFound } from './errors/resource-not-found-error';
 
 interface FindPetsServiceRequest {
   cityName: string;
   stateAbbreviation: string;
-  age?: PetAge;
-  port?: PetPort;
-  energyLevel?: PetEnergyLevel;
-  independenceLevel?: PetIndependenceLevel;
-  environment?: PetEnvironment;
+  age?: AgeEnum;
+  port?: PortEnum;
+  energyLevel?: EnergyLevelEnum;
+  independenceLevel?: IndependenceLevelEnum;
+  environment?: EnvironmentEnum;
   page?: number;
 }
 

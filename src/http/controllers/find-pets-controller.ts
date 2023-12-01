@@ -1,15 +1,15 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 
-import {
-  PetAge,
-  PetEnergyLevel,
-  PetEnvironment,
-  PetIndependenceLevel,
-  PetPort,
-} from '@/services/dtos/pet-dto';
 import { ResourceNotFound } from '@/services/errors/resource-not-found-error';
 import { makeFindPetsService } from '@/services/factories/make-find-pets-service';
+import {
+  AgeEnum,
+  EnergyLevelEnum,
+  EnvironmentEnum,
+  IndependenceLevelEnum,
+  PortEnum,
+} from '@prisma/client';
 
 export async function findPetsController(
   request: FastifyRequest,
@@ -18,11 +18,11 @@ export async function findPetsController(
   const findPetsParamsSchema = z.object({
     cityName: z.string(),
     stateAbbreviation: z.string(),
-    age: z.nativeEnum(PetAge).optional(),
-    port: z.nativeEnum(PetPort).optional(),
-    energyLevel: z.nativeEnum(PetEnergyLevel).optional(),
-    independenceLevel: z.nativeEnum(PetIndependenceLevel).optional(),
-    environment: z.nativeEnum(PetEnvironment).optional(),
+    age: z.nativeEnum(AgeEnum).optional(),
+    port: z.nativeEnum(PortEnum).optional(),
+    energyLevel: z.nativeEnum(EnergyLevelEnum).optional(),
+    independenceLevel: z.nativeEnum(IndependenceLevelEnum).optional(),
+    environment: z.nativeEnum(EnvironmentEnum).optional(),
     page: z.coerce.number().positive().default(1),
   });
 

@@ -1,15 +1,15 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 
-import {
-  PetAge,
-  PetEnergyLevel,
-  PetEnvironment,
-  PetIndependenceLevel,
-  PetPort,
-} from '@/services/dtos/pet-dto';
 import { ResourceNotFound } from '@/services/errors/resource-not-found-error';
 import { makeCreatePetService } from '@/services/factories/make-create-pet-service';
+import {
+  AgeEnum,
+  EnergyLevelEnum,
+  EnvironmentEnum,
+  IndependenceLevelEnum,
+  PortEnum,
+} from '@prisma/client';
 
 export async function createPetController(
   request: FastifyRequest,
@@ -20,11 +20,11 @@ export async function createPetController(
   const createPetBodySchema = z.object({
     name: z.string().min(3, 'Name must have at least 3 characters'),
     about: z.string().min(3, 'About must have at least 3 characters'),
-    age: z.nativeEnum(PetAge),
-    port: z.nativeEnum(PetPort),
-    energyLevel: z.nativeEnum(PetEnergyLevel),
-    independenceLevel: z.nativeEnum(PetIndependenceLevel),
-    environment: z.nativeEnum(PetEnvironment),
+    age: z.nativeEnum(AgeEnum),
+    port: z.nativeEnum(PortEnum),
+    energyLevel: z.nativeEnum(EnergyLevelEnum),
+    independenceLevel: z.nativeEnum(IndependenceLevelEnum),
+    environment: z.nativeEnum(EnvironmentEnum),
     photos: z.array(z.string()),
     adoptionRequirements: z.array(z.string()),
   });
